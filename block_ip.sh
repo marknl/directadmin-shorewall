@@ -10,13 +10,29 @@ BLOCK_CHAIN=dynamic
 curriptables()
 {
 	echo "<br><br><textarea cols=160 rows=60>";
-	shorewall show dynamic
+	/usr/sbin/shorewall show dynamic
+	/usr/sbin/shorewall6 show dynamic
 	echo "</textarea>";
 }
 
 if [ "$ip" = "" ]; then
         echo "No ip has been passed via env.";
         exit 1;
+fi
+
+VALID4=`ip -4 route get $ip > /dev/null 2>&1`
+RET4=$?
+VALID6=`ip -6 route get $ip > /dev/null 2>&1`
+RET6=$?
+
+if [ $RET4 == "0" ]
+then
+	IPVERSION="ipv4"
+elif [ $RET6 == "0" ]
+then
+	IPVERSION="ipv6"
+else
+	IPVERSION="0"
 fi
 
 ### Do we have a block file?
@@ -50,8 +66,21 @@ fi
 echo "Blocking $ip ...<br>";
 echo "$ip=dateblocked=`date +%s`" >> $BF;
 echo "Adding $ip into ${BLOCK_CHAIN} chain...";
-shorewall drop $ip
+
+if [ $IPVERSION == "ipv6" ]
+then
+	/usr/sbin/shorewall6 drop $ip
+elif [ $IPVERSION == "ipv4" ]
+then
+	/usr/sbin/shorewall drop $ip
+else
+	echo "$ip is not valid. Not blocking.";
+	curriptables
+	exit 2;
+fi
+
 echo "<br><br>Result:";
 curriptables
 
 exit 0;
+

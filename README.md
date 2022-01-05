@@ -6,7 +6,7 @@ The scripts will use the default "dynamic" chain in iptables that shorewall uses
 ## Installation
 ```bash
 cd /usr/local/directadmin/scripts/custom
-wget https://github.com/marknl/directadmin-shorewall/releases/download/v1.0/directadmin-shorewall-1.0.zip
+wget https://github.com/interwijs/directadmin-shorewall/releases/download/v1.0/directadmin-shorewall-1.0.zip
 chmod 700 block_ip.sh show_blocked_ips.sh unblock_ip.sh
 touch /root/blocked_ips.txt
 touch /root/exempt_ips.txt
